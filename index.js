@@ -1,84 +1,131 @@
-let currentResevationCode = "";
-let isReservationValid = false;
+// 1. Khai báo 4 biến đề bài yêu cầu ở ngoài vòng lặp
+let currentTicketCode = "";
+let isTicketValid = false;
 let totalRevenue = 0;
-let totalCheckouts = 0;
+let totalVisits = 0;
+
 let menu = true;
 
-while(menu){
-    console.log("Hệ thống lễ tân khách sạn SUNRISE HOTEL");
-    console.log("1. Nhập và kiểm chuẩn mã đặt phòng");
-    console.log("2. Tính tiền phòng lưu trú");
-    console.log("3. Thẩm định mã thẻ may mắn");
-    console.log("0. Thoát chương trình");
-    let choice = prompt("Vui long nhap lua chon cua ban (0 - 3) ");
-    switch (choice){
-        case "1":
-            currentResevationCode = "";
-            isReservationValid = false;
+while (menu) {
+  console.log("Hệ thống thu ngân phòng khám Medlatec Clinic ");
+  console.log("1. Nhập và kiểm chuẩn mã phiếu khám bệnh");
+  console.log("2. Tính viện phí xét nghiệm");
+  console.log("3. Thẩm định mã hồ sơ may mắn");
+  console.log("0. Thoát chương trình");
 
-            let id = prompt("Nhap ma dat phong").trim().toUpperCase();
-            if (id === null){
-                alert("Chua nhap ma dat phong");
-            }
-            if (id.length < 6){
-                console.log("Độ dài tối thiếu 6 ký tự");
-            }else if (id.startsWith("HTL-")){
-                console.log("Bắt đầu bằng 'HTL-'");
-            }else if (id.includes(" ")){
-                console.log("mã đặt phòng không chứa khoảng cách")
-            }
-            currentResevationCode = id;
-            isReservationValid = true
-            // alert("Mã đặt phòng hợp lệ");
-            break;
-        
-        case "2":
-            if (isReservationValid===false){
-                console.log("Yêu cầu chọn Case 1 trước")
-            }
+  let choice = prompt("Vui lòng nhập lựa chọn của bạn (0 - 3):");
 
-            nightCount = 0;
-            pricePerNight = 0;
-            cancel = false;
-            while (true){
-                let night_of_number = prompt("Nhập số đêm ").trim();
-                if (night_of_number>0){
-                    console.log("Số đêm phải là số nguyên lớn hơn 0");
+  if (choice === null || choice.trim() === "") {
+    console.log("Lựa chọn không hợp lệ, vui lòng chọn lại!");
+    continue;
+  }
 
-                }
-                nightCount = Number(night_of_number);
-            }
-            discountAmount = 0;
-            costBasis = nightCount * pricePerNight
-            if (nightCount >=4){
-                costBasis * 0.1;
-                discountAmount = costBasis;
-            }
-            service_fee = Math.round(costBasis - discountAmount) * 0.08
-            total_payment = (costBasis - discountAmount) + service_fee
-            totalCheckouts +=1;
+  choice = choice.trim();
 
-            console.log("Đơn giá: ", );
-            console.log("Chi phí cơ sở: "+ costBasis);
-            console.log("Giảm giá: "+discountAmount);
-            console.log("Phụ phí: "+service_fee);
-            console.log("Tổng thanh toán: "+total_payment);
+  switch (choice) {
+    
+    case "1": {
+      currentTicketCode = "";
+      isTicketValid = false;
 
-            break;
+      let input = prompt("Nhập mã phiếu khám bệnh:");
 
-        case "3":
-            
-            break;
-        
-        case "0":
-            console.log("Thoat thanh cong");
-            break;
+      if (input === null || input.trim() === "") {
+        console.log("Lỗi: Chưa nhập mã phiếu");
+        break;
+      }
 
-        default:
-            console.log("Lựa chọn không hợp lệ");
+      let code = input.trim().toUpperCase();
 
-
-
-
+     
+      if (code.length < 6) {
+        console.log("Lỗi: Độ dài nhỏ hơn 6 ký tự");
+      } else if (!code.startsWith("MED-")) {
+        console.log('Lỗi: Sai tiền tố "MED-"');
+      } else if (code.includes(" ")) {
+        console.log("Lỗi: Chứa khoảng trắng ở giữa");
+      } else {
+       
+        currentTicketCode = code;
+        isTicketValid = true;
+        console.log("Mã phiếu hợp lệ: " + currentTicketCode);
+      }
+      break;
     }
+
+   
+    case "2": {
+      if (!isTicketValid) {
+        console.log("Vui lòng nhập mã phiếu hợp lệ ở Case 1 trước!");
+        break;
+      }
+
+      let countInput = prompt("Nhập số lượng chỉ định (số nguyên > 0):");
+      let priceInput = prompt("Nhập đơn giá (số nguyên > 0):");
+
+      
+      if (countInput === null || priceInput === null) {
+        console.log("Đã hủy tính viện phí, giữ nguyên mã phiếu.");
+        break;
+      }
+
+      let count = Number(countInput.trim());
+      let price = Number(priceInput.trim());
+
+      
+      if (isNaN(count) || isNaN(price) || count <= 0 || price <= 0) {
+        console.log("Lỗi: Số lượng và đơn giá phải là số lớn hơn 0!");
+        break;
+      }
+
+      let baseCost = count * price;
+
+      let discount = 0;
+      if (count >= 4) {
+        discount = Math.round(baseCost * 0.1);
+      }
+
+      let surcharge = Math.round((baseCost - discount) * 0.08);
+      let total = (baseCost - discount) + surcharge;
+
+      totalRevenue += total;
+      totalVisits += 1;
+      console.log("--- HÓA ĐƠN VIỆN PHÍ ---");
+      console.log("Mã phiếu: " + currentTicketCode);
+      console.log("Số chỉ định: " + count);
+      console.log("Đơn giá: " + price.toLocaleString("vi-VN") + " VNĐ");
+      console.log("Chi phí cơ sở: " + baseCost.toLocaleString("vi-VN") + " VNĐ");
+      console.log("Tiền giảm giá: " + discount.toLocaleString("vi-VN") + " VNĐ");
+      console.log("Phụ phí vật tư: " + surcharge.toLocaleString("vi-VN") + " VNĐ");
+      console.log("Tổng thanh toán: " + total.toLocaleString("vi-VN") + " VNĐ");
+      currentTicketCode = "";
+      isTicketValid = false;
+      break;
+    }
+
+  
+    case "3": {
+    }
+    case "0": {
+      console.log("   BÁO CÁO TỔNG KẾT CA TRỰC");
+
+      if (totalVisits === 0) {
+        console.log("Chưa phát sinh lượt khám nào trong ca.");
+      } else {
+        let avg = Math.round(totalRevenue / totalVisits);
+        console.log("Tổng số lượt khám: " + totalVisits);
+        console.log("Tổng doanh thu: " + totalRevenue.toLocaleString("vi-VN") + " VNĐ");
+        console.log("Doanh thu trung bình/lượt: " + avg.toLocaleString("vi-VN") + " VNĐ");
+      }
+
+      console.log("Tạm biệt!");
+      isRunning = false;
+      break;
+    }
+
+    default: {
+      console.log("Không hợp lệ vui lòng nhập từ 0 đến 3!");
+      break;
+    }
+  }
 }
